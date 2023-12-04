@@ -21,7 +21,8 @@ class Pawn(Piece):
     def __init__(self, color, coordinate, isAlive):
         # Call the __init__ method of the Piece class
         super().__init__(color, coordinate, isAlive)
-
+        
+        self.type = "Pawn"
         # Determine the icon path for the piece
         self.iconPath = "./assets/"
 
@@ -66,7 +67,7 @@ class Pawn(Piece):
 
         else:
             if y == "7":
-                for i in [5, 6]:
+                for i in [6, 5]:
                     if board[x + str(i)]["piece"] == None:
                         moveableCoordinates.append(x + str(i))
                     else:

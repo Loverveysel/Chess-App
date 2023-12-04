@@ -8,6 +8,8 @@ class RoundWidget(QWidget):
         self.label = QLabel("Round : White")
         self.label.setStyleSheet("color: brown;")
         
+        
+
         font = QFont()
         font.setPixelSize(11)
         font.setBold(True)

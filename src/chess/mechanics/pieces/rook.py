@@ -13,6 +13,7 @@ class Rook(Piece):
     def __init__(self, color, coordinate, isAlive):
         # Call the superclass constructor with relevant information
         super().__init__(color, coordinate, isAlive)
+        self.type = "Rook"
         
         # Set the path for the rook's icon based on its color
         self.iconPath = "./assets/"

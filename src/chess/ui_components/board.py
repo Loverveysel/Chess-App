@@ -34,7 +34,7 @@ class Board(QWidget):
                 # Create a QPushButton for each square on the chessboard
                 square = QPushButton(coordinate)
                 square.setFixedSize(self.squareSize, self.squareSize)
-                square.setStyleSheet('background-color : brown; border: none;') if((colIndex + rowIndex) % 2 != 0) else square.setStyleSheet('background-color : white; border: none;')
+                square.setStyleSheet('background-color : brown; border: none;') if((colIndex + rowIndex) % 2 == 0) else square.setStyleSheet('background-color : white; border: none;')
                 square.setContentsMargins(0,0,0,0)
 
                 # Add the QPushButton to the layout

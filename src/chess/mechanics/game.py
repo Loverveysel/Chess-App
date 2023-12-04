@@ -176,9 +176,13 @@ class Game:
             oldCoor = piece.coordinate
             self.board[coor]["piece"] = piece
             piece.coordinate = coor
+            self.board[coordinate]["piece"] = None
             isCheck = self.checkCheck()
-            if isCheck == True:
+            if isCheck:
                checkedCoordinates.append(coor)
+               print(coor)
+
+            self.board[coordinate]["piece"] = piece
             self.board[coor]["piece"] = old
             piece.coordinate = oldCoor
             
@@ -211,11 +215,9 @@ class Game:
 
         self.board[coordinate]["piece"] = piece
         self.board[oldCoordinate]["piece"] = None
+        piece.coordinate = coordinate
         
-        if self.round[0] == "w":
-            self.round = "black"
-        else:
-            self.round = "white"
+        
         
         #CHECKING CASTLING...
         if coordinate == self.castlingCoordinate["coordinate"]:
@@ -233,7 +235,15 @@ class Game:
             self.castling[piece.color]["queenSide"]["did"] = True
             self.castling[piece.color]["kingSide"]["did"] = True
         
+        if self.round[0] == "w":
+            self.round = "black"
+        else:
+            self.round = "white"
+
         self.checks()
+        print(self.whiteKing.coordinate)
+
+        
         
 
     def checks(self):
@@ -242,19 +252,36 @@ class Game:
         self.check = self.checkCheck()
         self.checkCastling()
 
+        if self.check:
+            self.castling[self.round]["queenSide"]["did"] = True
+            self.castling[self.round]["kingSide"]["did"] = True
+
+        print(self.check)
+        """print(self.castling[self.round]["kingSide"]["did"])
+        print(self.round)"""
+
+
     def checkCheck(self):
         # Check if a king is under check
 
-        if self.round[0] == 'w':
+        if self.round[0] == "w":
             for piece in self.blackPieces:
                 moveableCoordinates = piece.moveableCoors(self.board)
+                print("white")
+                print(moveableCoordinates)
                 if self.whiteKing.coordinate in moveableCoordinates:
                     return True
         else:
             for piece in self.whitePieces:
+
+                
                 moveableCoordinates = piece.moveableCoors(self.board)
+                print("black")
+                print(moveableCoordinates)
+                
                 if self.blackKing.coordinate in moveableCoordinates:
                     return True
+                
         return False
 
     def checkCastling(self):

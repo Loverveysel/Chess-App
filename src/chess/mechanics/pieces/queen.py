@@ -14,6 +14,7 @@ class Queen(Piece):
         # Call the superclass constructor with relevant information
         super().__init__(color, coordinate, isAlive)
         
+        self.type = "Queen"
         # Set the path for the queen's icon based on its color
         self.iconPath = "./assets/"
         if self.color == "white":

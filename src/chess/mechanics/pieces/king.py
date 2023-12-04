@@ -21,7 +21,7 @@ class King(Piece):
     def __init__(self, color, coordinate, isAlive):
         # Call the __init__ method of the Piece class
         super().__init__(color, coordinate, isAlive)
-
+        self.type = "King"
         # Determine the icon path for the piece
         self.iconPath = "./assets/"
 

@@ -22,6 +22,7 @@ class Knight(Piece):
         # Call the __init__ method of the Piece class
         super().__init__(color, coordinate, isAlive)
 
+        self.type = "Knight"
         # Determine the icon path for the piece
         self.iconPath = "./assets/"
 
