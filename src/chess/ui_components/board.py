@@ -2,7 +2,7 @@
 import sys
 from os.path import abspath, dirname
 
-from PyQt5.QtWidgets import QPushButton, QGridLayout, QWidget
+from PyQt5.QtWidgets import QPushButton, QGridLayout, QWidget, QLabel
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
 
@@ -111,6 +111,13 @@ class Board(QWidget):
         # Update the UI
         self.clickEvent()
         self.setIcons()
+        
+        if self.Game.winner:
+            self.clearLayout()
+            label = QLabel("Winner : " + self.Game.winner)
+            self.layout.addWidget(label)
+        
+        print(self.Game.winner)
 
     def setIcons(self):
         # Set piece icons on the board
@@ -124,3 +131,12 @@ class Board(QWidget):
                     self.squares[coordinate]["button"].setIconSize(size)
                 else:
                     self.squares[coordinate]["button"].setIcon(QIcon())
+
+    def clearLayout(self):
+        while self.layout.count():
+            item = self.layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+            else:
+                self.clearLayout(item.layout())

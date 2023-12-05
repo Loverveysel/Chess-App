@@ -23,6 +23,7 @@ class Game:
             "white" : self.whitePieces,
             "black" : self.blackPieces
         }
+        self.winner = ""
 
         self.castling = {
             "white":{
@@ -145,16 +146,7 @@ class Game:
             } 
         }
         
-        for row in self.xCoordinates:
-            for col in  self.yCoordinates:
-                coordinate = row + col
-                square = self.board[coordinate]
-                if square["piece"] != None:
-                    if square["piece"].color[0] == 'w':
-                        self.whitePieces.append(square["piece"])
-                    else:
-                        self.blackPieces.append(square["piece"])
-    
+
     def checkMoveableCoordinates(self, coordinate):        
         # Check the movable coordinates for a given piece
 
@@ -172,18 +164,23 @@ class Game:
         #Check the coordinate is able to move(Checking checks :D)
         #CHECKİNG CHECKS...
         for coor in coordinateList:
-            old = self.board[coor]["piece"]
+            oldPiece = self.board[coor]["piece"]
             oldCoor = piece.coordinate
             self.board[coor]["piece"] = piece
             piece.coordinate = coor
             self.board[coordinate]["piece"] = None
+            if oldPiece != None:
+                self.allPieces[self.reverseColor(piece)].remove(oldPiece)
+                
             isCheck = self.checkCheck()
             if isCheck:
                checkedCoordinates.append(coor)
-               print(coor)
 
+            if oldPiece != None:
+                self.allPieces[self.reverseColor(piece)].append(oldPiece)
+                
             self.board[coordinate]["piece"] = piece
-            self.board[coor]["piece"] = old
+            self.board[coor]["piece"] = oldPiece
             piece.coordinate = oldCoor
             
         ##CHECK CASTLING...
@@ -192,7 +189,6 @@ class Game:
             for side in sides:
                 if self.castling[piece.color][side]["did"] != True:  
                     if self.castling[piece.color][side]["able"] == True:
-                        print(self.castling[piece.color][side]["castledKingCoordinate"])
                         coordinateList.append(self.castling[piece.color][side]["castledKingCoordinate"])
                         self.castlingCoordinate = {
                             "coordinate" : self.castling[piece.color][side]["castledKingCoordinate"],
@@ -212,6 +208,10 @@ class Game:
         Move a piece to a new coordinate on the board.
         Handle turn switching and additional logic for special moves like castling.
         """
+
+        if self.board[coordinate]["piece"] != None:
+            self.allPieces[self.reverseRound()].remove(self.board[coordinate]["piece"])
+            print(self.allPieces[self.reverseRound()])
 
         self.board[coordinate]["piece"] = piece
         self.board[oldCoordinate]["piece"] = None
@@ -241,7 +241,6 @@ class Game:
             self.round = "white"
 
         self.checks()
-        print(self.whiteKing.coordinate)
 
         
         
@@ -251,14 +250,11 @@ class Game:
 
         self.check = self.checkCheck()
         self.checkCastling()
+        self.checkFinish()
 
         if self.check:
             self.castling[self.round]["queenSide"]["did"] = True
             self.castling[self.round]["kingSide"]["did"] = True
-
-        print(self.check)
-        """print(self.castling[self.round]["kingSide"]["did"])
-        print(self.round)"""
 
 
     def checkCheck(self):
@@ -267,18 +263,13 @@ class Game:
         if self.round[0] == "w":
             for piece in self.blackPieces:
                 moveableCoordinates = piece.moveableCoors(self.board)
-                print("white")
-                print(moveableCoordinates)
+
                 if self.whiteKing.coordinate in moveableCoordinates:
                     return True
         else:
             for piece in self.whitePieces:
-
-                
                 moveableCoordinates = piece.moveableCoors(self.board)
-                print("black")
-                print(moveableCoordinates)
-                
+
                 if self.blackKing.coordinate in moveableCoordinates:
                     return True
                 
@@ -297,10 +288,8 @@ class Game:
             for side in sides:
                 if self.castling[color][side]["did"] == False:
                     if self.castling[color][side]["rook"].coordinate != self.castling[color][side]["coordinate"]:
-                        print("1")
                         self.castling[color][side]["did"] = True
                     elif self.kings[color]["startPoint"] != self.kings[color]["object"].coordinate:
-                        print(self.kings[color]["startPoint"])
                         self.castling[color]["queenSide"]["did"] = True
                         self.castling[color]["kingSide"]["did"] = True
                     else:
@@ -326,3 +315,28 @@ class Game:
                         else:
                             self.castling[color][side]["able"] = False
     
+    def reverseRound(self):
+        if self.round[0] == "w":
+            return "black"
+        else:
+            return "white"
+        
+    def reverseColor(self, piece):
+        if piece.color == "black":
+            return "white" 
+        else:
+            return "black"
+        
+    def checkFinish(self):
+        finish = True
+        
+        for piece in self.allPieces[self.round]:
+            moveableCoordinates = self.checkMoveableCoordinates(piece.coordinate)
+            
+            if moveableCoordinates:
+                finish = False
+
+                break
+        
+        if finish == True:
+            self.winner = self.round
